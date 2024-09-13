@@ -1,0 +1,94 @@
+# Static information about the filesystems.
+# See fstab(5) for details.
+
+# <file system> <dir> <type> <options> <dump> <pass>
+
+
+# Boot
+UUID=2EE0-F141                              /boot                                       vfat    rw,noatime,nofail,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro 0 2
+
+
+# Root
+UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /                                           btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@root 0 0
+UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /var/cache/pacman/pkg                       btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@pkg 0 0
+UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /var/lib/machines                           btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@machines 0 0
+UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /var/lib/portables                          btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@portables 0 0
+UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /var/lib/systemd/coredump                   btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@coredump 0 0
+UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /var/log                                    btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@log 0 0
+UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /var/tmp                                    btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@tmp 0 0
+# Snapshots
+UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /.snapshots                                 btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.root 0 0
+UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /var/cache/pacman/pkg/.snapshots            btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.pkg 0 0
+
+
+# Data
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home                                       btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@home 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /data                                       btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@data 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /multimedia1                                btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@multimedia 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /multimedia1/Games                          btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@games 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/goghor/Sources                        btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@sources 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/goghor/Projects                       btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@projects 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/goghor/.cache/yay                     btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@yay 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/goghor/VMs                            btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@vms 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/goghor/.ccache                        btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@ccache 0 0
+# Snapshots
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/.snapshots                            btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.home 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /data/.snapshots                            btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.data 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /multimedia1/.snapshots                     btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.multimedia 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /multimedia1/Games/.snapshots               btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.games 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/goghor/Sources/.snapshots             btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.sources 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/goghor/Projects/.snapshots            btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.projects 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/goghor/.cache/yay/.snapshots          btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.yay 0 0
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/goghor/VMs/.snapshots                 btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.vms 0 0
+
+
+# Multimedia
+UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2                                btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@multimedia 0 0
+UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2/Games                          btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@games 0 0
+# Snapshots
+UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2/.snapshots                     btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.multimedia 0 0
+UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2/Games/.snapshots               btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.games 0 0
+
+
+# Bind
+/data/Documents                             /home/goghor/Documents                      none    defaults,bind 0 0
+/data/Firefox/Data                          /home/goghor/.mozilla                       none    defaults,bind 0 0
+/data/Firefox/Cache                         /home/goghor/.cache/mozilla                 none    defaults,bind 0 0
+/data/Thorium/Data                          /home/goghor/.config/thorium                none    defaults,bind 0 0
+/data/Thorium/Cache                         /home/goghor/.cache/thorium                 none    defaults,bind 0 0
+/data/Telegram/Config/TelegramDesktoprc     /home/goghor/.config/TelegramDesktoprc      none    defaults,bind 0 0
+/data/Telegram/Data                         /home/goghor/.local/share/TelegramDesktop   none    defaults,bind 0 0
+/data/Discord                               /home/goghor/.config/discord                none    defaults,bind 0 0
+/data/VSCode/Data                           /home/goghor/.config/Code                   none    defaults,bind 0 0
+/data/VSCode/Cache                          /home/goghor/.vscode                        none    defaults,bind 0 0
+/data/ZapZap/Config                         /home/goghor/.config/ZapZap                 none    defaults,bind 0 0
+/data/ZapZap/Data                           /home/goghor/.local/share/ZapZap            none    defaults,bind 0 0
+/data/ZapZap/Cache                          /home/goghor/.cache/ZapZap                  none    defaults,bind 0 0
+/data/ChatGPT/Data/chat-gpt                 /home/goghor/.local/share/chat-gpt          none    defaults,bind 0 0
+/data/ChatGPT/Data/com.lencx.chatgpt        /home/goghor/.local/share/com.lencx.chatgpt none    defaults,bind 0 0
+/data/ChatGPT/Config                        /home/goghor/.chatgpt                       none    defaults,bind 0 0
+/data/ChatGPT/Cache                         /home/goghor/.cache/chat-gpt                none    defaults,bind 0 0
+#
+/multimedia1/Music                          /home/goghor/Music                          none    defaults,bind 0 0
+/multimedia1/Pictures                       /home/goghor/Pictures                       none    defaults,bind 0 0
+/multimedia1/Videos                         /home/goghor/Videos                         none    defaults,bind 0 0
+/multimedia1/Games/Launcher/Steam           /home/goghor/.local/share/Steam             none    defaults,bind 0 0
+/multimedia1/Games/Launcher/Lutris/Data     /home/goghor/.local/share/lutris            none    defaults,bind 0 0
+/multimedia1/Games/Launcher/Lutris/Cache    /home/goghor/.cache/lutris                  none    defaults,bind 0 0
+/multimedia1/Games/Minecraft/.minecraft     /home/goghor/.minecraft                     none    defaults,bind 0 0
+/multimedia1/Games/Minecraft/.tlauncher     /home/goghor/.tlauncher                     none    defaults,bind 0 0
+/multimedia1/Games/Wine/Default             /home/goghor/.wine                          none    defaults,bind 0 0
+/multimedia1/Games/Wine/Cache/wine          /home/goghor/.cache/wine                    none    defaults,bind 0 0
+/multimedia1/Games/Wine/Cache/winetricks    /home/goghor/.cache/winetricks              none    defaults,bind 0 0
+
+
+# Network
+# x-systemd.automount,x-systemd.mount-timeout=10,timeo=15,x-systemd.idle-timeout=5min
+192.168.8.2:/srv/Downloads                  /NAS/Downloads                              nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
+192.168.8.2:/srv/Animes                     /NAS/Animes                                 nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
+192.168.8.2:/srv/Movies                     /NAS/Movies                                 nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
+192.168.8.2:/srv/TVs                        /NAS/TVs                                    nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
+192.168.8.2:/srv/Shared                     /NAS/Shared                                 nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
+192.168.8.2:/srv/Private                    /NAS/Private                                nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
+192.168.8.2:/srv/Pacman                     /NAS/Pacman                                 nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
+# 192.168.8.2:/srv/Restricted                 /NAS/Restricted                             nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
