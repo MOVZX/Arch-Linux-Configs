@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+SESSION=$(loginctl list-sessions | awk '/goghor/ {print $1}')
+
+if [ -n "$SESSION" ]; then
+    loginctl lock-session "$SESSION"
+fi

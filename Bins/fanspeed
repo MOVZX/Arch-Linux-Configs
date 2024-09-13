@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+SPEED=$1
+
+if [[ -z $SPEED ]]; then
+    echo -e "\nError: Kecepatan kipas belum ditentukan!"
+    echo "- Set di antara 0 - 255 untuk kecepatan manual"
+    echo "- Set ke 256 untuk kecepatan otomatis (diatur oleh layanan FanControl)"
+
+    exit 0
+fi
+
+MODE="Manual"
+
+[[ $SPEED -eq 256 ]] && MODE="Automatic"
+
+echo -e "\nMode: $SPEED ($MODE)"
+
+if [[ $SPEED -lt 256 ]]; then
+    echo -e "\nMenghentikan layanan FanControl"
+
+    sudo systemctl stop fancontrol.service
+
+    # Set fan speeds
+    FAN_PATH="/sys/class/hwmon/hwmon1"
+
+    declare -a FANS=("pwm1" "pwm4" "pwm5" "pwm6")
+
+    for FAN in "${FANS[@]}"; do
+        echo "Menyetel kecepatan kipas pada $FAN"
+        echo $SPEED | sudo tee "$FAN_PATH/$FAN" &> /dev/null
+    done
+
+    echo -e "Selesai\n"
+else
+    echo -e "\nMenyetel ulang layanan FanControl"
+
+    sudo systemctl restart fancontrol.service
+
+    echo -e "Selesai\n"
+fi

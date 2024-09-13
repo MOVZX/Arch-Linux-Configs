@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+sudo paccache -r -k 2
+
+rsync -ah --info=progress2 --exclude=".snapshots/" "/var/cache/pacman/pkg/" "/NAS/Pacman/"

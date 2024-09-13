@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+LC_NUMERIC="en_GB.UTF-8"
+
+# Read temperatures and power
+CPU_TCTL=$(cat /sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon7/temp1_input)
+CPU_TCCD=$(cat /sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon7/temp3_input)
+CPU_POWER=$(/usr/local/bin/ryzen)
+
+# Convert temperatures to Celsius
+CPU_TCTL=$((CPU_TCTL / 1000))
+CPU_TCCD=$((CPU_TCCD / 1000))
+
+# Collect CPU frequencies
+for i in {0..15}; do
+    CPU_FREQ[$i]=$(cat /sys/devices/system/cpu/cpu$i/cpufreq/scaling_cur_freq)
+    CPU_FREQ[$i]=$((CPU_FREQ[$i] / 1000)) # Convert to MHz
+done
+
+# Output data
+echo ""
+echo "Ryzen 7 7800X3D"
+echo ""
+printf "Tctl    : %11.40s\n" "$CPU_TCTL °C"
+printf "Tccd    : %11.40s\n" "$CPU_TCCD °C"
+printf "Power   : %10.40s\n" "$CPU_POWER W"
+echo ""
+
+# Output CPU frequencies
+for i in {0..15}; do
+    printf "CPU %2d  : %10.40s\n" "$((i + 1))" "${CPU_FREQ[$i]} MHz"
+done

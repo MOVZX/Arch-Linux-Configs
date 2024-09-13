@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+
+print_usage()
+{
+    echo "Sintaks: upscale GAMBAR METODE SKALA, contoh: upscale gambar.jpg 1 4"
+    echo ""
+    echo "Upscaler Bawaan: Anime4K"
+    echo ""
+    echo "Daftar Upscaler:"
+    echo "1. Anime4K"
+    echo "2. RealSR-NCNN"
+    echo ""
+    echo "Skala hanya tersedia untuk Anime4K"
+}
+
+if [ -z "$1" ]; then
+    print_usage
+
+    exit 1
+fi
+
+FILE_GAMBAR="$1"
+
+if [ ! -f "$FILE_GAMBAR" ]; then
+    notify-send -u low -a "Perbesar Gambar" -i emblem-error "File \"$FILE_GAMBAR\" tidak ditemukan!"
+
+    exit 1
+fi
+
+NAMA_FILE="${FILE_GAMBAR##*/}"
+NAMA_FILE="${NAMA_FILE%.*}"
+EKSTENSI_FILE="${FILE_GAMBAR##*.}"
+UPSCALED="${NAMA_FILE}_upscaled"
+OUTPUT_FILE="$(dirname "$FILE_GAMBAR")/${UPSCALED}.${EKSTENSI_FILE}"
+
+UPSCALER_CHOICE=$(zenity --list --title="Perbesar Gambar" --radiolist \
+    --text="Pilih metode pembesaran" \
+    --column="Opsi" --column="Metode" \
+    --cancel-label="Batalkan" --ok-label="Lanjutkan" \
+    TRUE "Anime4K" \
+    FALSE "RealSR-NCNN" \
+    --width=300 --height=300)
+
+if [ -z "$UPSCALER_CHOICE" ]; then
+    notify-send -u low -a "Perbesar Gambar" -i emblem-error "Pembesaran gambar dibatalkan!"
+
+    exit 1
+fi
+
+UPSCALER="$UPSCALER_CHOICE"
+
+if [ -z "$3" ]; then
+    echo "Memperbesar gambar \"$FILE_GAMBAR\" dengan pembesaran 4x"
+else
+    echo "Memperbesar gambar \"$FILE_GAMBAR\" dengan pembesaran $3x"
+fi
+notify-send -u low -a "Perbesar Gambar" -i emblem-information "Memperbesar gambar \"$FILE_GAMBAR\" dengan pembesaran 4x"
+
+# Catat Waktu Mulai
+START_TIME=$(date +%s%3N)
+
+show_progress()
+{
+    local command="$1"
+
+    eval "$command" 2>&1 | tee /tmp/upscale_output.log &
+
+    local pid=$!
+
+    (
+    while kill -0 $pid 2>/dev/null; do
+        if grep -oP '([0-9]+\.[0-9]+)%' /tmp/upscale_output.log; then
+            progress=$(grep -oP '([0-9]+\.[0-9]+)%' /tmp/upscale_output.log | tail -n1 | tr -d '%')
+
+            echo "$progress"
+            echo "# Memperbesar Gambar... ($progress%)"
+        else
+            echo "50"
+            echo "# Memproses... (estimasi 50%)"
+        fi
+
+        sleep 1
+    done
+    ) | zenity --progress --title="$UPSCALER" --percentage=0 --time-remaining --auto-close --width=300 --auto-kill --text="Memperbesar Gambar..." --cancel-label="Batalkan"
+
+    wait $pid
+}
+
+if [ "$UPSCALER" == "RealSR-NCNN" ]; then
+    notify-send -u low -a "Perbesar Gambar" -i emblem-information "Menggunakan RealSR-NCNN untuk memperbesar gambar \"$FILE_GAMBAR\""
+
+    show_progress "realsr-ncnn-vulkan -v -i \"$FILE_GAMBAR\" -o \"$OUTPUT_FILE\" -s 4"
+else
+    notify-send -u low -a "Perbesar Gambar" -i emblem-information "Menggunakan Anime4K untuk memperbesar gambar \"$FILE_GAMBAR\""
+
+    if [ -z "$3" ]; then
+        show_progress "ac_cli -i \"$FILE_GAMBAR\" -o \"$OUTPUT_FILE\""
+    else
+        show_progress "ac_cli -i \"$FILE_GAMBAR\" -o \"$OUTPUT_FILE\" -f $3"
+    fi
+fi
+
+rm /tmp/upscale_output.log
+
+if [ $? -eq 0 ] ; then
+    # Catat Waktu Selesai
+    END_TIME=$(date +%s%3N)
+    ELAPSED_TIME=$((END_TIME - START_TIME))
+    MINUTES=$((ELAPSED_TIME / 60000))
+    SECONDS=$(((ELAPSED_TIME % 60000) / 1000))
+    MILLISECONDS=$((ELAPSED_TIME % 1000))
+
+    if [ "$ELAPSED_TIME" -lt 1000 ]; then
+        FORMATTED_TIME=$(printf "%03d milidetik" "$MILLISECONDS")
+    elif [ "$ELAPSED_TIME" -lt 60000 ]; then
+        FORMATTED_TIME=$(printf "%02d.%03d detik" "$SECONDS" "$MILLISECONDS")
+    else
+        FORMATTED_TIME=$(printf "%02d menit %02d.%03d detik" "$MINUTES" "$SECONDS" "$MILLISECONDS")
+    fi
+
+    echo "Perbesar gambar selesai ($FORMATTED_TIME)"
+    notify-send -u low -a "Perbesar Gambar" -i emblem-default "Perbesar gambar selesai ($FORMATTED_TIME)"
+
+    exit 0
+fi
+
+echo "Terjadi kesalahan dalam pembesaran gambar!"
+notify-send -u low -a "Perbesar Gambar" -i emblem-error "Terjadi kesalahan dalam pembesaran gambar!"
+
+exit 1

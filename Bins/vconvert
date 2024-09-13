@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+
+print_usage()
+{
+    echo "Sintaks: vconvert VIDEO [ENCODER], contoh: vconvert video.mp4 hevc_vaapi"
+    echo ""
+    echo "Encoder Bawaan: hevc_vaapi"
+    echo ""
+    echo "Daftar Encoder:"
+    echo "- libx264"
+    echo "- h264_amf"
+    echo "- h264_vaapi"
+    echo "- libx265"
+    echo "- hevc_amf"
+    echo "- hevc_vaapi"
+    echo "- libsvt_hevc"
+    echo "- libsvtav1"
+}
+
+if [ -z "$1" ]; then
+    print_usage
+
+    exit 1
+fi
+
+FILE_VIDEO="$1"
+CODEC="${2:-hevc_vaapi}"
+NAMA_FILE="${FILE_VIDEO##*/}"
+NAMA_FILE="${NAMA_FILE%.*}"
+EKSTENSI_FILE="${FILE_VIDEO##*.}"
+PARAMS="-rc cqp -qp_p 0 -qp_i 0"
+
+CODEC_CHOICE=$(zenity --list --title="Konversi Video" --radiolist \
+    --text="Pilih format konversi" \
+    --column="Opsi" --column="Format" \
+    --cancel-label="Batalkan" --ok-label="Lanjutkan" \
+    TRUE "hevc_vaapi" \
+    FALSE "libsvt_hevc" \
+    FALSE "libx265" \
+    FALSE "hevc_amf" \
+    FALSE "h264_vaapi" \
+    FALSE "libx264" \
+    FALSE "h264_amf" \
+    FALSE "libsvtav1" \
+    --width=300 --height=550)
+
+if [ -z "$CODEC_CHOICE" ]; then
+    notify-send -u low -a "Konversi Video" -i emblem-error "Konversi video dibatalkan!"
+
+    exit 1
+fi
+
+CODEC="$CODEC_CHOICE"
+
+case $CODEC in
+    libx264)
+        FORMAT="H264"
+        PARAMS="-crf 23"
+    ;;
+    libx265)
+        FORMAT="HEVC"
+        PARAMS="-crf 28"
+    ;;
+    h264_vaapi)
+        FORMAT="H264"
+        PARAMS="-qp 23"
+    ;;
+    hevc_vaapi | libsvt_hevc)
+        FORMAT="HEVC"
+        PARAMS="-qp 28"
+    ;;
+    libsvtav1)
+        FORMAT="AV1"
+        PARAMS="-crf 30"
+    ;;
+    h264_amf | hevc_amf)
+        FORMAT="H264"
+        PARAMS="-qp 23"
+    ;;
+    *)
+        CODEC="hevc_vaapi"
+        FORMAT="HEVC"
+        PARAMS="-crf 28"
+    ;;
+esac
+
+VAAPI=0
+
+[[ "$CODEC" == *"vaapi"* ]] && VAAPI=1
+
+CONVERTED="(${FORMAT}-${CODEC}) ${NAMA_FILE}"
+OUTPUT_FILE="${CONVERTED}.${EKSTENSI_FILE}"
+TEMP_COVER="${NAMA_FILE}_cover.jpg"
+
+echo "Mengkonversi video \"$NAMA_FILE.${EKSTENSI_FILE}\" ke format ${FORMAT} menggunakan ${CODEC}"
+notify-send -u low -a "Konversi Video" -i emblem-information "Mengkonversi video \"$NAMA_FILE.${EKSTENSI_FILE}\" ke format ${FORMAT} menggunakan ${CODEC}"
+
+# Ekstrak Gambar Cover (jika ada)
+echo "Mengekstrak gambar cover video (jika ada)"
+ffmpeg -i "$FILE_VIDEO" -map 0:v:1 -c copy "$TEMP_COVER" 2>/dev/null
+
+# Verifikasi Gambar Cover
+if [ ! -s "$TEMP_COVER" ]; then
+    echo "Gambar Cover video tidak tersedia"
+    TEMP_COVER=""
+fi
+
+# Catat Waktu Mulai
+START_TIME=$(date +%s%3N)
+
+# Catat Durasi Video
+DURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$FILE_VIDEO")
+TOTAL_DURATION=$(printf "%.0f" "$(echo "$DURATION" | awk '{print int($1+0.5)}')")
+
+konversi_ke_detik()
+{
+    local time_str="$1"
+
+    IFS=: read -r h m s <<< "$time_str"
+    h=${h#0}
+    m=${m#0}
+    s=${s#0}
+
+    echo $(( h * 3600 + m * 60 + s ))
+}
+
+# Konversi video
+(
+    if [ "$VAAPI" -eq 1 ]; then
+        ffmpeg -y -loglevel trace -hwaccel vaapi -hwaccel_output_format vaapi -i "$FILE_VIDEO" -vf 'format=nv12|vaapi,hwupload' -c:v "$CODEC" $PARAMS -c:a copy "$OUTPUT_FILE" 2>&1 |
+        while IFS= read -r line; do
+            if [[ "$line" =~ time=([0-9:]+:[0-9:]+:[0-9:]+) ]]; then
+                time_str=${BASH_REMATCH[1]}
+                elapsed_seconds=$(konversi_ke_detik "$time_str")
+                progress=$(( (elapsed_seconds * 100) / TOTAL_DURATION ))
+
+                echo "$progress"
+                echo "# Mengkonversi Video... ($progress%)"
+            fi
+        done
+    else
+        ffmpeg -y -loglevel trace -i "$FILE_VIDEO" -c:v "$CODEC" $PARAMS -c:a copy "$OUTPUT_FILE" 2>&1 |
+        while IFS= read -r line; do
+            if [[ "$line" =~ time=([0-9:]+:[0-9:]+:[0-9:]+) ]]; then
+                time_str=${BASH_REMATCH[1]}
+                elapsed_seconds=$(konversi_ke_detik "$time_str")
+                progress=$(( (elapsed_seconds * 100) / TOTAL_DURATION ))
+
+                echo "$progress"
+                echo "# Mengkonversi Video... ($progress%)"
+            fi
+        done
+    fi
+) | zenity --progress --title="FFMPEG: ${FORMAT} (${CODEC})" --percentage=0 --time-remaining --auto-close --width=300 --auto-kill --text="Mengkonversi Video..." --cancel-label="Batalkan"
+
+if [ $? -eq 0 ] ; then
+    # Catat Waktu Selesai
+    END_TIME=$(date +%s%3N)
+    ELAPSED_TIME=$((END_TIME - START_TIME))
+    MINUTES=$((ELAPSED_TIME / 60000))
+    SECONDS=$(((ELAPSED_TIME % 60000) / 1000))
+    MILLISECONDS=$((ELAPSED_TIME % 1000))
+
+    if [ "$ELAPSED_TIME" -lt 1000 ]; then
+        FORMATTED_TIME=$(printf "%03d milidetik" "$MILLISECONDS")
+    elif [ "$ELAPSED_TIME" -lt 60000 ]; then
+        printf -v FORMATTED_TIME "%02d.%03d detik" "$SECONDS" "$MILLISECONDS"
+    else
+        printf -v FORMATTED_TIME "%02d menit %02d.%03d detik" "$MINUTES" "$SECONDS" "$MILLISECONDS"
+    fi
+
+    # Tambahkan gambar cover ke video
+    if [ -n "$TEMP_COVER" ]; then
+        echo "Menambahkan gambar cover ke video"
+        ffmpeg -i "$OUTPUT_FILE" -c copy -attach "$TEMP_COVER" -metadata:s:t mimetype=image/jpeg "${CONVERTED}_with_cover.${EKSTENSI_FILE}"
+
+        mv "${CONVERTED}_with_cover.${EKSTENSI_FILE}" "$OUTPUT_FILE"
+        rm "$TEMP_COVER"
+    else
+        ffmpeg -i "$OUTPUT_FILE" -i "$TEMP_COVER" -map 0 -map 1 -c copy -disposition:v:1 attached_pic "${CONVERTED}_with_cover.${EKSTENSI_FILE}"
+    fi
+
+    echo "Konversi video selesai ($FORMATTED_TIME)"
+    notify-send -u low -a "Konversi Video" -i emblem-success "Konversi video selesai ($FORMATTED_TIME)"
+
+    exit 0
+fi
+
+echo "Terjadi kesalahan dalam konversi video!"
+notify-send -u low -a "Konversi Video" -i emblem-error "Terjadi kesalahan dalam konversi video!"
+
+exit 1

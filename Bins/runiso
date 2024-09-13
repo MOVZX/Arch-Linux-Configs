@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+    echo "Sintaks: runiso FILE_ISO, contoh: runiso Arch_Linux.iso"
+else
+    /home/goghor/Sources/Arch-User-ISO/archuseriso/aui-run --uefi --cpu 16 --ram 16 --iso "$1"
+fi

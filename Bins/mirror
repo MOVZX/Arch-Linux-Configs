@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+reflector --sort rate -n 10 -a 10 -c id,sg -p https --ipv4 --verbose --save /etc/pacman.d/mirrorlist >/dev/null 2>&1
+
+sed -i '11i CacheServer = http:\/\/192.168.8.2\/arch' /etc/pacman.d/mirrorlist

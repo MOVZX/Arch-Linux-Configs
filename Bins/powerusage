@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if pgrep -x "wine" > /dev/null || pgrep -x "wineserver" > /dev/null; then
+    exit 0
+fi
+
+if [ "$1" == "cpu" ]; then
+    CPU_TEMPERATURE1=$(sensors k10temp-pci-* | awk -F '[:°C]' '/Tctl:/ {print $2}')
+    CPU_TEMPERATURE2=$(sensors k10temp-pci-* | awk -F '[:°C]' '/Tccd1:/ {print $2}')
+    CPU_POWER=$(/usr/local/bin/ryzen)
+
+    printf "   %0.0f °C      %0.0f °C   󰚥 %0.0f W\n" "$CPU_TEMPERATURE1" "$CPU_TEMPERATURE2" "$CPU_POWER"
+else
+    GPU_TEMPERATURE1=$(rocm-smi -t | awk '/Temperature \(Sensor edge\) \(C\):/ {print $NF}')
+    GPU_TEMPERATURE2=$(rocm-smi -t | awk '/Temperature \(Sensor junction\) \(C\):/ {print $NF}')
+    GPU_TEMPERATURE3=$(rocm-smi -t | awk '/Temperature \(Sensor memory\) \(C\):/ {print $NF}')
+    GPU_POWER=$(rocm-smi -P | awk '/Average Graphics Package Power \(W\):/ {print $NF}')
+
+    printf "   %0.0f °C      %0.0f °C      %0.0f °C   󰚥 %0.0f W\n" "$GPU_TEMPERATURE1" "$GPU_TEMPERATURE2" "$GPU_TEMPERATURE3" "$GPU_POWER"
+fi

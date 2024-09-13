@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+find . \( -type d -exec chmod 755 {} + \) -o \
+       \( -type f -exec chmod 644 {} + \) -o \
+       \( -type f \( -name "*.exe" -o -name "*.sh" \) -exec chmod +x {} + \)

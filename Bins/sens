@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+
+LC_NUMERIC="en_GB.UTF-8"
+
+sudo chmod 644 /sys/class/powercap/intel-rapl:0/energy_uj
+
+MOBO=$(< /sys/devices/platform/nct6687.2592/hwmon/hwmon1/temp2_input)
+VRM=$(< /sys/devices/platform/nct6687.2592/hwmon/hwmon1/temp3_input)
+PCH=$(< /sys/devices/platform/nct6687.2592/hwmon/hwmon1/temp5_input)
+
+CPU_TCTL=$(< /sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon7/temp1_input)
+CPU_TCCD=$(< /sys/devices/pci0000:00/0000:00:18.3/hwmon/hwmon7/temp3_input)
+CPU_POWER=$(/usr/local/bin/ryzen)
+
+GPU_EDGE=$(< /sys/devices/pci0000:00/0000:00:01.1/0000:01:00.0/0000:02:00.0/0000:03:00.0/hwmon/hwmon6/temp1_input)
+GPU_JUNCTION=$(< /sys/devices/pci0000:00/0000:00:01.1/0000:01:00.0/0000:02:00.0/0000:03:00.0/hwmon/hwmon6/temp2_input)
+GPU_MEM=$(< /sys/devices/pci0000:00/0000:00:01.1/0000:01:00.0/0000:02:00.0/0000:03:00.0/hwmon/hwmon6/temp3_input)
+GPU_POWER=$(< /sys/devices/pci0000:00/0000:00:01.1/0000:01:00.0/0000:02:00.0/0000:03:00.0/hwmon/hwmon6/power1_average)
+
+NVME1=$(< /sys/class/hwmon/hwmon5/temp1_input)
+NVME2=$(< /sys/class/hwmon/hwmon3/temp1_input)
+NVME3=$(< /sys/class/hwmon/hwmon2/temp1_input)
+NVME4=$(< /sys/class/hwmon/hwmon4/temp1_input)
+
+RADIATOR=$(< /sys/devices/platform/nct6687.2592/hwmon/hwmon1/fan1_input)
+TOP_FANS=$(< /sys/devices/platform/nct6687.2592/hwmon/hwmon1/fan4_input)
+BOTTOM1_FANS=$(< /sys/devices/platform/nct6687.2592/hwmon/hwmon1/fan5_input)
+BOTTOM2_FANS=$(< /sys/devices/platform/nct6687.2592/hwmon/hwmon1/fan6_input)
+
+MOBO=$((MOBO / 1000))
+VRM=$((VRM / 1000))
+PCH=$((PCH / 1000))
+CPU_TCTL=$((CPU_TCTL / 1000))
+CPU_TCCD=$((CPU_TCCD / 1000))
+GPU_EDGE=$((GPU_EDGE / 1000))
+GPU_JUNCTION=$((GPU_JUNCTION / 1000))
+GPU_MEM=$((GPU_MEM / 1000))
+GPU_POWER=$((GPU_POWER / 1000 / 1000))
+NVME1=$((NVME1 / 1000))
+NVME2=$((NVME2 / 1000))
+NVME3=$((NVME3 / 1000))
+NVME4=$((NVME4 / 1000))
+
+echo ""
+echo "ASRock B650E Steel Legend"
+printf "Mobo     : %0.2f °C\n" "$MOBO"
+printf "VRM      : %0.2f °C\n" "$VRM"
+printf "Chipset  : %0.2f °C\n" "$PCH"
+echo ""
+
+echo "AMD Ryzen 7 7800X3D"
+printf "Tctl     : %0.2f °C\n" "$CPU_TCTL"
+printf "Tccd     : %0.2f °C\n" "$CPU_TCCD"
+printf "Power    : %0.2f W\n" "$CPU_POWER"
+echo ""
+
+echo "AMD Radeon RX 6800 XT"
+printf "Edge     : %0.2f °C\n" "$GPU_EDGE"
+printf "Junction : %0.2f °C\n" "$GPU_JUNCTION"
+printf "Mem      : %0.2f °C\n" "$GPU_MEM"
+printf "Power    : %0.2f W\n" "$GPU_POWER"
+echo ""
+
+echo "PNY CS3030 2TB"
+printf "NAND     : %0.2f °C\n" "$NVME1"
+echo ""
+
+echo "AddLink S70 2TB"
+printf "NAND     : %0.2f °C\n" "$NVME2"
+echo ""
+
+echo "AddLink S70 2TB"
+printf "NAND     : %0.2f °C\n" "$NVME3"
+echo ""
+
+echo "Transcend TS1TMTE220S 1TB"
+printf "NAND     : %0.2f °C\n" "$NVME4"
+echo ""
+
+echo "Lian Li Lancool II"
+echo "Radiator : $RADIATOR RPM"
+echo "Top      : $TOP_FANS RPM"
+echo "Bottom 1 : $BOTTOM1_FANS RPM"
+echo "Bottom 2 : $BOTTOM2_FANS RPM"
