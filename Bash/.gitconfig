@@ -1,0 +1,16 @@
+[user]
+name = MOVZX
+email = movzx@yahoo.com
+signingkey = 39F2E5352F41D7D1
+
+[commit]
+gpgsign = true
+
+[color]
+ui = auto
+
+[credential]
+helper = cache --timeout=72000
+
+[core]
+editor = nano
