@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Bash Script...
+Comment=Enter script filename:
+Type=Link
+URL=.source/bash-script.sh
+Icon=application-x-shellscript
