@@ -1,0 +1,16 @@
+[Appearance]
+BackgroundColorOpacity=25
+HideSkinBorders=true
+Skin=yakuake
+Translucency=true
+
+[Dialogs]
+FirstRun=false
+
+[FileDialogSize]
+2 screens: Height=720
+2 screens: Width=1280
+
+[Window]
+DynamicTabTitles=true
+KeepOpen=false
