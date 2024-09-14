@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-LC_NUMERIC="en_GB.UTF-8"  # For consistent numeric formatting
+LC_NUMERIC="en_GB.UTF-8"
 
 # Read Temperatures and Power
 HWMON_PATH=$(grep -l 'k10temp' /sys/class/hwmon/hwmon*/name)
 
 if [ -n "$HWMON_PATH" ]; then
-    CPU_TCTL=$(cat "${HWMON_PATH%/name}/temp1_input")
-    CPU_TCCD=$(cat "${HWMON_PATH%/name}/temp3_input")
+    CPU_TCTL=$(< "${HWMON_PATH%/name}/temp1_input")
+    CPU_TCCD=$(< "${HWMON_PATH%/name}/temp3_input")
     CPU_TCTL=$((CPU_TCTL / 1000))
     CPU_TCCD=$((CPU_TCCD / 1000))
     CPU_POWER=$(/usr/local/bin/ryzen)
 else
-    echo "k10temp sensor not found."
+    echo "k10temp sensor module not found!"
 
     exit 1
 fi
