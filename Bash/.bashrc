@@ -51,8 +51,6 @@ fi
 ssh-add ~/.ssh/Root
 ssh-add ~/.ssh/GitHub
 
-clear;
-
 # source ~/.mygit
 
 export PATH="/usr/lib/ccache/bin:$PATH"

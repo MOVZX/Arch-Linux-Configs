@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+sudo tail -f /var/log/squid/access.log | awk '{ gsub("TCP_MISS", "\033[1;31m&\033[0m");
+                                                gsub("TCP_HIT", "\033[1;32m&\033[0m");
+                                                gsub("TCP_MEM_HIT", "\033[1;36m&\033[0m");
+                                                gsub("TCP_INM_HIT", "\033[1;35m&\033[0m");
+                                            print }'

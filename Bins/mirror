@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
-reflector --sort rate -n 10 -a 10 -c id,sg -p https --ipv4 --verbose --save /etc/pacman.d/mirrorlist >/dev/null 2>&1
+[[ -z "$1" ]] && echo "Sintaks: mirror JUMLAH UMUR NEGARA, contoh: mirror 10 10 id,sg" && exit 1
 
-sed -i '11i CacheServer = http:\/\/192.168.8.2\/arch' /etc/pacman.d/mirrorlist
+JUMLAH="$1"
+UMUR="$2"
+NEGARA="$3"
+
+echo ""
+echo "Jumlah    : $JUMLAH"
+echo "Umur      : $UMUR"
+echo "Negara    : $NEGARA"
+echo ""
+
+sudo reflector --verbose --sort rate -n "$JUMLAH" -a "$UMUR" -c "$NEGARA" -p https --ipv4 --verbose --save /etc/pacman.d/mirrorlist
+
+sudo sed -i '11i CacheServer = http:\/\/192.168.8.2\/arch\n' /etc/pacman.d/mirrorlist
+
+echo ""
+
+cat /etc/pacman.d/mirrorlist

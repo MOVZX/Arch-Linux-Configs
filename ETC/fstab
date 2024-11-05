@@ -21,6 +21,10 @@ UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /.snapshots                         
 UUID=eec9d2d4-8c24-47bf-a76f-b96d77e7aaaf   /var/cache/pacman/pkg/.snapshots            btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.pkg 0 0
 
 
+# Squid
+UUID=a419a097-8160-4e7c-b89a-719cac828475   /var/cache/squid                            btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@squid 0 0
+
+
 # Data
 UUID=a419a097-8160-4e7c-b89a-719cac828475   /home                                       btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@home 0 0
 UUID=a419a097-8160-4e7c-b89a-719cac828475   /data                                       btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@data 0 0
@@ -43,11 +47,11 @@ UUID=a419a097-8160-4e7c-b89a-719cac828475   /home/goghor/VMs/.snapshots         
 
 
 # Multimedia
-UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2                                btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@multimedia 0 0
-UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2/Games                          btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@games 0 0
+# UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2                                btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@multimedia 0 0
+# UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2/Games                          btrfs   rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@games 0 0
 # Snapshots
-UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2/.snapshots                     btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.multimedia 0 0
-UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2/Games/.snapshots               btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.games 0 0
+# UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2/.snapshots                     btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.multimedia 0 0
+# UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2/Games/.snapshots               btrfs   rw,noatime,nofail,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=/@.games 0 0
 
 
 # Bind
@@ -88,6 +92,8 @@ UUID=b0aa33c6-43bd-4050-bcc9-d2f0d0ec7642   /multimedia2/Games/.snapshots       
 192.168.8.2:/srv/Animes                     /NAS/Animes                                 nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
 192.168.8.2:/srv/Movies                     /NAS/Movies                                 nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
 192.168.8.2:/srv/TVs                        /NAS/TVs                                    nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
+192.168.8.2:/srv/Apps                       /NAS/Apps                                   nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
+192.168.8.2:/srv/Games                      /NAS/Games                                  nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
 192.168.8.2:/srv/Shared                     /NAS/Shared                                 nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
 192.168.8.2:/srv/Private                    /NAS/Private                                nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0
 192.168.8.2:/srv/Pacman                     /NAS/Pacman                                 nfs    rw,defaults,noatime,nofail,user,noauto,_netdev,retrans=5 0 0

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SESSION=$(loginctl list-sessions | awk '/goghor/ {print $1}')
+SESSION=$(loginctl list-sessions --no-legend | grep goghor | awk '{print $1; exit}')
 
 if [ -n "$SESSION" ]; then
     loginctl unlock-session "$SESSION"

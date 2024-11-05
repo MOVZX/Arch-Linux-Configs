@@ -4,3 +4,5 @@ journalctl --rotate
 journalctl --vacuum-time=1s
 
 coredumpctl list
+
+exit 0

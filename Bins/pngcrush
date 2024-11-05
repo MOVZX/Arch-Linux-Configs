@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
 find . -path './snapshots' -prune -o -iname '*.png' -exec oxipng -v -o max {} +
+
+exit 0

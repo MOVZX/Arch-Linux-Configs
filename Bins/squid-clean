@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+echo "Stopping Squid Proxy service...";
+systemctl stop squid;
+
+echo "Removing old Squid Proxy caches..."
+rm -rf /var/cache/squid/*;
+rm -rf /var/log/squid/*;
+
+echo "Regenerating Squid Proxy SSL Cache...";
+/usr/lib/squid/security_file_certgen -c -s /var/cache/squid/ssl_db -M 32MB;
+
+echo "Setting correct permissions...";
+chown -R proxy:proxy /var/cache/squid;
+chown -R proxy:proxy /var/log/squid;
+chown -R proxy:proxy /var/cache/squid/ssl_db;
+
+echo "Regenerating Squid Proxy Cache...";
+squid -z;
+
+# systemctl reload squid;
